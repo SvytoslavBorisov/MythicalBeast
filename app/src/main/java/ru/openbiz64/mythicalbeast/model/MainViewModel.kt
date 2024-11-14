@@ -77,7 +77,6 @@ open class MainViewModel(): ViewModel() {
                 //Log.d("MyLog", "Loading Articals from phone")
                 //setArticleData(DataJsonLoader.getArticleData("articals", APP_CONTEXT))
 
-
                 Log.d("MyLog", "Loading Articals from Internet")
                 val interceptor = HttpLoggingInterceptor()
                 interceptor.level = HttpLoggingInterceptor.Level.BODY
