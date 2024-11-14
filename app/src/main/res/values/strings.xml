@@ -45,5 +45,6 @@
     <string name="res_player">ОТВЕТ ИГРОКА:</string>
     <string name="res_player_ans">Миодраг\nБожович</string>
     <string name="res_correct_ans">Курбан\nБердыев</string>
-    <string name="next">ДАЛЕЕ</string>
+    <string name="next">Далее</string>
+
 </resources>
