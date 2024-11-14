@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="main_bkg">#FF121212</color>
+    <color name="item_bkg">#2F2F2F</color>
+    <color name="item_text">#D2D2D2</color>
+    <color name="nav_item_sel">#C57307</color>
+    <color name="nav_item_not">#bebebe</color>
+    <color name="button_help">#F40303</color>
+    <color name="green">#3C9A02</color>
+    <color name="wrong">#C02E00</color>
+
+    <color name="mainmenu">#2C2C2C</color>
+    <color name="mybkg">#FF121212</color>
+    <color name="text_description">#FAF5D2</color>
+    <color name="text_game">#1B1B1B</color>
+</resources>

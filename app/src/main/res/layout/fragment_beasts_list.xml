@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".fragment.FruitsListFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mainLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusableInTouchMode="true">
+
+        <Spinner
+            android:id="@+id/spinnerMain"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/black"
+            android:entries="@array/test_spinner"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="3dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mineralRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/mybkg"
+            app:layout_constraintBottom_toTopOf="@+id/productListBanner"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:listitem="@layout/article_item_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spinnerMain" />
+
+
+        <com.yandex.mobile.ads.banner.BannerAdView
+            android:id="@+id/productListBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+</FrameLayout>

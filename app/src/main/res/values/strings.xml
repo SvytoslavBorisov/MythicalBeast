@@ -1,0 +1,49 @@
+<resources>
+    <string name="app_name">Мифические существа</string>
+    <string name="all_category">Все мифологии</string>
+    <string-array name="test_spinner">
+        <item>Все мифологии</item>
+        <item>Славянская мифология</item>
+    </string-array>
+
+    <string name="nmBeasts">Существа</string>
+    <string name="nmFavorite">Избранное</string>
+    <string name="nmArticle">Истории</string>
+    <string name="nmGames">Викторина</string>
+    <string name="fMenuReset">Сброс</string>
+    <string name="fMenuOk">OK</string>
+    <string name="search">Поиск</string>
+    <string name="filter">Фильтр</string>
+    <string name="sort">Сортировка</string>
+    <string name="view">Вид</string>
+    <string name="repeat">Повторить</string>
+    <string name="noconnection">Нет связи с сервером</string>
+    <string name="help">ПОМОЩЬ</string>
+    <string name="question">Вопрос викторины</string>
+    <string name="family">Вариант ответа</string>
+    <string name="congratulations">Поздравляю!</string>
+    <string name="statistic">Результаты</string>
+    <string name="image">КАРТИНКА</string>
+    <string name="close">Закрыть</string>
+    <string name="score_result">Верно %1$d / Ошибок %2$d</string>
+    <string name="correct">Верно!</string>
+    <string name="wrong">Ошибка!</string>
+    <string name="file_not_found">Файл не найден!</string>
+    <string name="very_bad">Очень плохо!</string>
+    <string name="bad">Плохо!</string>
+    <string name="good">Хорошо!</string>
+    <string name="excelent">Отлично!</string>
+    <string name="briliant">Превосходно!</string>
+    <string name="briliant_txt">Вы настоящий профессионал.</string>
+    <string name="excelent_txt">Вы отлично разбираетесь в этой теме.</string>
+    <string name="good_txt">Но еще есть куда расти.</string>
+    <string name="bad_txt">Вы очень слабо разбираетесь в этой теме.</string>
+    <string name="very_bad_txt">Совершенно никуда не годится!</string>
+
+    <string name="longtext">Какой клуб Краснодар обыграл в квалификации Лиги Чемпионов со счетом 2:3 в сезоне 19/20?</string>
+    <string name="res_correct">ВЕРНЫЙ ОТВЕТ:</string>
+    <string name="res_player">ОТВЕТ ИГРОКА:</string>
+    <string name="res_player_ans">Миодраг\nБожович</string>
+    <string name="res_correct_ans">Курбан\nБердыев</string>
+    <string name="next">ДАЛЕЕ</string>
+</resources>
