@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="main_bkg">#FF121212</color>
+    <color name="button_bkg">#575757</color>
     <color name="item_bkg">#2F2F2F</color>
     <color name="item_text">#D2D2D2</color>
     <color name="nav_item_sel">#C57307</color>
@@ -19,5 +20,5 @@
     <color name="mainmenu">#2C2C2C</color>
     <color name="mybkg">#FF121212</color>
     <color name="text_description">#FAF5D2</color>
-    <color name="text_game">#1B1B1B</color>
+    <color name="text_game">#BFBFBF</color>
 </resources>

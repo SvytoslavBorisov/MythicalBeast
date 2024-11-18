@@ -19,7 +19,7 @@
     <string name="repeat">Повторить</string>
     <string name="noconnection">Нет связи с сервером</string>
     <string name="help">ПОМОЩЬ</string>
-    <string name="question">Вопрос викторины</string>
+    <string name="question">Вопрос викторины 1 линия\nвторая линия\nтретья линия\nчетвертая линия</string>
     <string name="family">Вариант ответа</string>
     <string name="congratulations">Поздравляю!</string>
     <string name="statistic">Результаты</string>
