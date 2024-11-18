@@ -5,6 +5,9 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.android.volley.Request
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
@@ -12,6 +15,8 @@ import retrofit2.Retrofit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONArray
+import org.json.JSONObject
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.openbiz64.mythicalbeast.APP_CONTEXT
 import ru.openbiz64.mythicalbeast.R
@@ -64,18 +69,15 @@ open class MainViewModel(): ViewModel() {
         Log.d("MyLog", "init MainViewModel")
 
         loadArticalsFromInternet()
-
+        loadGameListFromInternet()
     }
 
-        fun loadArticalsFromInternet(){
+    fun loadArticalsFromInternet(){
             CoroutineScope(Dispatchers.IO).launch {
 
                 // считываем количество старых историй
                 val sharedPref: SharedPreferences = APP_CONTEXT.getSharedPreferences(CommonConst.sharedBlock, Context.MODE_PRIVATE)
                 val articleCount = sharedPref.getInt("articleCount", 0)
-
-                //Log.d("MyLog", "Loading Articals from phone")
-                //setArticleData(DataJsonLoader.getArticleData("articals", APP_CONTEXT))
 
                 Log.d("MyLog", "Loading Articals from Internet")
                 val interceptor = HttpLoggingInterceptor()
@@ -113,23 +115,47 @@ open class MainViewModel(): ViewModel() {
 
                 Log.d("MyLog", "Model init CoroutineScope end")
             }
-        }
+    }
 
-        private fun setArticleData(articleList: ArrayList<ArticleDataClass>){
-        reserveData.clear()
-        reserveData.addAll(articleList)
-        //reserveData.sortBy { it.titleRU }
-        articleData.postValue(reserveData)
+    private fun loadGameListFromInternet(){
+        val list: ArrayList<GameDataClass> = arrayListOf()
+        val url = "https://amaranth64.github.io/myth/quiz/games.json"
+        val queue = Volley.newRequestQueue(APP_CONTEXT)
+        val sRequest = StringRequest(
+            Request.Method.GET,
+            url,
+            { response ->
 
-        Log.d("MyLog", "setArticleData")
+                if (response.isNotEmpty()) {
 
-        val setOfCategory: MutableSet<String> = mutableSetOf<String>()
-        setOfCategory.add(CommonConst.allCategory)
-        articleList.forEach{
-            setOfCategory.add(it.category)
-        }
-        articleCategory.clear()
-        articleCategory.addAll(setOfCategory)
+                    val jsonArray = JSONArray(response)
+
+                    for (i in 0 until jsonArray.length()) {
+                        val obj = jsonArray.getJSONObject(i)
+
+                        val title = obj.getString("title")
+                        val slug = obj.getString("slug")
+                        val picURL = obj.getString("picURL")
+                        val description = obj.getString("description")
+
+                        val data = GameDataClass(
+                            title,
+                            slug,
+                            picURL,
+                            description
+                        )
+
+                        list.add(data)
+                    }
+                    setGameData(list)
+                }
+            },
+            {
+                Log.d("MyLog", "VolleyError: $it")
+            }
+        )
+        sRequest.setShouldCache(false)
+        queue.add(sRequest)
     }
 
     fun setFilter(filter: FilterDataClass){
@@ -143,7 +169,7 @@ open class MainViewModel(): ViewModel() {
         articleData.postValue(tmp)
     }
 
-    fun setGameData(gameList: ArrayList<GameDataClass>){
+    private fun setGameData(gameList: ArrayList<GameDataClass>){
         reserveGameData.clear()
         reserveGameData.addAll(gameList)
         gameData.postValue(reserveGameData)
