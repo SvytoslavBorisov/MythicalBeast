@@ -27,6 +27,7 @@ import com.yandex.mobile.ads.rewarded.RewardedAdEventListener
 import com.yandex.mobile.ads.rewarded.RewardedAdLoader
 import com.yandex.mobile.ads.rewarded.RewardedAdLoadListener
 import ru.openbiz64.mythicalbeast.dataclass.DataClassQuestion
+import ru.openbiz64.mythicalbeast.dataclass.DataClassQuestionWithoutType
 import ru.openbiz64.mythicalbeast.dataclass.DataClassStatisticResult
 import ru.openbiz64.mythicalbeast.dataclass.GameConst
 import kotlin.math.roundToInt
@@ -34,14 +35,14 @@ import kotlin.math.roundToInt
 class QuestionActivity: AppCompatActivity(), View.OnClickListener, RewardedAdLoadListener {
 
     private lateinit var form: QuizLayoutBinding
-    private lateinit var questionList: ArrayList<DataClassQuestion>
+    private lateinit var questionList: ArrayList<DataClassQuestionWithoutType>
     private var mCurrentPosition: Int = 1
     private var mCorrectAnswers: Int = 0
     private var mWrongAnswers: Int = 0
     private var mCommonQuestion: Int = 0
 
     private var mLastClickTime: Long = 0
-    private lateinit var question: DataClassQuestion
+    private lateinit var question: DataClassQuestionWithoutType
 
     private var mType: String = ""
     private var mCaption: String = ""
@@ -69,7 +70,7 @@ class QuestionActivity: AppCompatActivity(), View.OnClickListener, RewardedAdLoa
         val fileName: String = mType
         mCommonQuestion = GameConst.question_for_champgame_count
 
-        questionList = GetQuestionsHelper.getQuestions(fileName, this)
+        questionList = GetQuestionsHelper.getQuestions("vampir", this)
         if (questionList.isEmpty()) finish()
 
         question = questionList[0]
@@ -116,225 +117,90 @@ class QuestionActivity: AppCompatActivity(), View.OnClickListener, RewardedAdLoa
 
     }
 
-    private fun getQuestions(){
+    private fun getQuestions() {
+        // Создание списков через listOf() для упрощения
+        val tvAnswerLineList = listOf(form.tvAnswerLine1Caption, form.tvAnswerLine2Caption)
+        val tvAnswerList = listOf(form.tvAnswer1Caption, form.tvAnswer2Caption, form.tvAnswer3Caption, form.tvAnswer4Caption)
+        val ivAnswerList = listOf(form.ivAnswer1Image, form.ivAnswer2Image, form.ivAnswer3Image, form.ivAnswer4Image)
 
-        val tvAnswerLineList = ArrayList<TextView>()
-        tvAnswerLineList.add(0,  form.tvAnswerLine1Caption)
-        tvAnswerLineList.add(1,  form.tvAnswerLine2Caption)
-
-        val tvAnswerList = ArrayList<TextView>()
-        tvAnswerList.add(0,  form.tvAnswer1Caption)
-        tvAnswerList.add(1,  form.tvAnswer2Caption)
-        tvAnswerList.add(2,  form.tvAnswer3Caption)
-        tvAnswerList.add(3,  form.tvAnswer4Caption)
-
-        val ivAnswerList = ArrayList<ImageView>()
-        ivAnswerList.add(0,  form.ivAnswer1Image)
-        ivAnswerList.add(1,  form.ivAnswer2Image)
-        ivAnswerList.add(2,  form.ivAnswer3Image)
-        ivAnswerList.add(3,  form.ivAnswer4Image)
-
-        form.clAnswer1.visibility = View.VISIBLE
-        form.clAnswer2.visibility = View.VISIBLE
-        form.clAnswer3.visibility = View.VISIBLE
-        form.clAnswer4.visibility = View.VISIBLE
-
-        var listNumbers:ArrayList<Int> = arrayListOf(0,1,2,3)
-        listNumbers.shuffle()
-
-        var listLineNumbers:ArrayList<Int> = arrayListOf(0,1)
-        listLineNumbers.shuffle()
-
-        form.progressBar.progress = mCurrentPosition
-        question = questionList[mCurrentPosition-1]
-        form.tvProgerss.text = mCurrentPosition.toString() + "/" + mCommonQuestion.toString()
-
-        if (question.type >= 6) {
-            form.layoutQuestionLine.visibility = View.VISIBLE
-            form.layoutQuestion.visibility = View.GONE
-            form.bHelp.visibility =  View.INVISIBLE
-        }  else {
-            form.layoutQuestion.visibility = View.VISIBLE
-            form.layoutQuestionLine.visibility = View.GONE
-            if (isAdsload) form.bHelp.visibility =  View.VISIBLE
+        // Сразу делаем все изображения ответов невидимыми
+        ivAnswerList.forEach {
+            it.visibility = View.GONE
         }
 
-        when (question.type) {
+        // Устанавливаем видимость для всех элементов
+        listOf(form.clAnswer1, form.clAnswer2, form.clAnswer3, form.clAnswer4).forEach {
+            it.visibility = View.VISIBLE
+        }
 
-            1 -> {
-                try {
-                    val inputStream = applicationContext.assets.open("images/" + question.slugQuestion + ".webp")
-                    val bmp = BitmapDrawable.createFromStream(inputStream, null)?.toBitmap()
+        // Перемешиваем номера
+        val listNumbers = mutableListOf(0, 1, 2, 3).apply { shuffle() }
+        val listLineNumbers = mutableListOf(0, 1).apply { shuffle() }
+
+        // Обновляем прогресс
+        form.progressBar.progress = mCurrentPosition
+        form.tvProgerss.text = "$mCurrentPosition/$mCommonQuestion"
+
+        // Получаем вопрос
+        question = questionList[mCurrentPosition - 1]
+        val wrongAnswersSize = question.wrongAnswers.size
+
+        // Проверяем, сколько неправильных ответов
+        if (wrongAnswersSize < 4) {
+            form.layoutQuestionLine.visibility = View.VISIBLE
+            form.layoutQuestion.visibility = View.GONE
+            form.bHelp.visibility = View.INVISIBLE
+        } else {
+            form.layoutQuestion.visibility = View.VISIBLE
+            form.layoutQuestionLine.visibility = View.GONE
+            if (isAdsload) form.bHelp.visibility = View.VISIBLE
+        }
+
+        // Загружаем картинку, если она есть
+        if (question.slugQuestion != "no_pic") {
+            try {
+                applicationContext.assets.open("images/${question.slugQuestion}.webp").use {
+                    val bmp = BitmapDrawable.createFromStream(it, null)?.toBitmap()
                     form.ivImage.setImageBitmap(bmp)
                     form.ivImage.visibility = View.VISIBLE
-                } catch (e: IOException) {
-                    Toast.makeText(this, "File not found", Toast.LENGTH_LONG).show()
                 }
-
-
-                form.tvQuestion.text = question.textQuestion
-
-                for (i in 0..2){
-                    val j = listNumbers[i]
-                    ivAnswerList[j].visibility = View.GONE
-
-                    tvAnswerList[j].visibility = View.VISIBLE
-                    tvAnswerList[j].text = question.wrongAnswers[i].text
-                }
-
-                ivAnswerList[listNumbers[3]].visibility = View.GONE
-                tvAnswerList[listNumbers[3]].visibility = View.VISIBLE
-                tvAnswerList[listNumbers[3]].text = question.textCorrectAnswer
-
+            } catch (e: IOException) {
+                Toast.makeText(this, "File not found", Toast.LENGTH_LONG).show()
             }
+        } else {
+            form.ivImage.visibility = View.GONE
+        }
 
+        // Загружаем текст вопроса
+        form.tvQuestion.text = question.textQuestion
+
+        // Действия в зависимости от размера неправильных ответов
+        when (wrongAnswersSize) {
             2 -> {
-                try {
-                    val inputStream = applicationContext.assets.open("images/" + question.slugQuestion + ".webp")
-                    val bmp = BitmapDrawable.createFromStream(inputStream, null)?.toBitmap()
-                    form.ivImage.setImageBitmap(bmp)
-                    form.ivImage.visibility = View.VISIBLE
-                } catch (e: IOException) {
-                    Toast.makeText(this, "File not found", Toast.LENGTH_LONG).show()
-                }
-                form.tvQuestion.text = question.textQuestion
-
-                for (i in 0..2) {
+                for (i in 0..1) {
                     val j = listNumbers[i]
-
-                    try {
-                        val inputStream = applicationContext.assets.open("images/" + question.wrongAnswers[j].slug + ".webp")
-                        val bmp = BitmapDrawable.createFromStream(inputStream, null)?.toBitmap()
-                        ivAnswerList[j].setImageBitmap(bmp)
-                        ivAnswerList[j].visibility = View.VISIBLE
-                    } catch (e: IOException) {
-                        Toast.makeText(this, "File not found", Toast.LENGTH_LONG).show()
-                    }
-
                     tvAnswerList[j].visibility = View.VISIBLE
                     tvAnswerList[j].text = question.wrongAnswers[j].text
                 }
-
-                try {
-                    val inputStream = applicationContext.assets.open("images/" + question.slugCorrectAnswer + ".webp")
-                    val bmp = BitmapDrawable.createFromStream(inputStream, null)?.toBitmap()
-                    ivAnswerList[listNumbers[3]].setImageBitmap(bmp)
-                    ivAnswerList[listNumbers[3]].visibility = View.VISIBLE
-                } catch (e: IOException) {
-                    Toast.makeText(this, "File not found", Toast.LENGTH_LONG).show()
-                }
-                tvAnswerList[listNumbers[3]].visibility = View.VISIBLE
-                tvAnswerList[listNumbers[3]].text = question.textCorrectAnswer
-
+                tvAnswerList[listNumbers[2]].visibility = View.VISIBLE
+                tvAnswerList[listNumbers[2]].text = question.textCorrectAnswer
             }
-
-            3 -> {
-                form.ivImage.visibility = View.GONE
-                form.tvQuestion.text = question.textQuestion
-
-                for (i in 0..2) {
-                    val j = listNumbers[i]
-                    ivAnswerList[j].visibility = View.GONE
-                    tvAnswerList[j].visibility = View.VISIBLE
-                    tvAnswerList[j].text = question.wrongAnswers[j].text
-                }
-
-                ivAnswerList[listNumbers[3]].visibility = View.GONE
-                tvAnswerList[listNumbers[3]].visibility = View.VISIBLE
-                tvAnswerList[listNumbers[3]].text = question.textCorrectAnswer
-
-            }
-
-            4 -> {
-                form.ivImage.visibility = View.GONE
-                form.tvQuestion.text = question.textQuestion
-
-                for (i in 0..2) {
-                    val j = listNumbers[i]
-
-                    try {
-                        val inputStream = applicationContext.assets.open("images/" + question.wrongAnswers[j].slug + ".webp")
-                        val bmp = BitmapDrawable.createFromStream(inputStream, null)?.toBitmap()
-                        ivAnswerList[j].setImageBitmap(bmp)
-                        ivAnswerList[j].visibility = View.VISIBLE
-                    } catch (e: IOException) {
-                        Toast.makeText(this, "File not found", Toast.LENGTH_LONG).show()
-                    }
-
-                    tvAnswerList[j].visibility = View.GONE
-                    tvAnswerList[j].text = question.wrongAnswers[j].text
-                }
-
-                try {
-                    val inputStream = applicationContext.assets.open("images/" + question.slugCorrectAnswer + ".webp")
-                    val bmp = BitmapDrawable.createFromStream(inputStream, null)?.toBitmap()
-                    ivAnswerList[listNumbers[3]].setImageBitmap(bmp)
-                    ivAnswerList[listNumbers[3]].visibility = View.VISIBLE
-                } catch (e: IOException) {
-                    Toast.makeText(this, "File not found", Toast.LENGTH_LONG).show()
-                }
-                tvAnswerList[listNumbers[3]].visibility = View.GONE
-                tvAnswerList[listNumbers[3]].text = question.textCorrectAnswer
-
-            }
-
-            5-> {
-                form.ivImage.visibility = View.GONE
-                form.tvQuestion.text = question.textQuestion
-
-                for (i in 0..2) {
-                    val j = listNumbers[i]
-
-                    try {
-                        val inputStream = applicationContext.assets.open("images/" + question.wrongAnswers[j].slug + ".webp")
-                        val bmp = BitmapDrawable.createFromStream(inputStream, null)?.toBitmap()
-                        ivAnswerList[j].setImageBitmap(bmp)
-                        ivAnswerList[j].visibility = View.VISIBLE
-                    } catch (e: IOException) {
-                        Toast.makeText(this, "File not found", Toast.LENGTH_LONG).show()
-                    }
-
-                    tvAnswerList[j].visibility = View.VISIBLE
-                    tvAnswerList[j].text = question.wrongAnswers[j].text
-                }
-
-                try {
-                    val inputStream = applicationContext.assets.open("images/" + question.slugCorrectAnswer + ".webp")
-                    val bmp = BitmapDrawable.createFromStream(inputStream, null)?.toBitmap()
-                    ivAnswerList[listNumbers[3]].setImageBitmap(bmp)
-                    ivAnswerList[listNumbers[3]].visibility = View.VISIBLE
-                } catch (e: IOException) {
-                    Toast.makeText(this, "File not found", Toast.LENGTH_LONG).show()
-                }
-                tvAnswerList[listNumbers[3]].visibility = View.VISIBLE
-                tvAnswerList[listNumbers[3]].text = question.textCorrectAnswer
-
-            }
-
-            6 -> {
-
-
-                try {
-                    val inputStream = applicationContext.assets.open("images/" + question.slugQuestion + ".webp")
-                    val bmp = BitmapDrawable.createFromStream(inputStream, null)?.toBitmap()
-                    form.ivImage.setImageBitmap(bmp)
-                    form.ivImage.visibility = View.VISIBLE
-                } catch (e: IOException) {
-                    Toast.makeText(this, "Обновите приложение", Toast.LENGTH_LONG).show()
-                }
-
-
-                form.tvQuestion.text = question.textQuestion
-
+            1 -> {
                 tvAnswerLineList[listLineNumbers[0]].visibility = View.VISIBLE
                 tvAnswerLineList[listLineNumbers[0]].text = question.wrongAnswers[0].text
 
                 tvAnswerLineList[listLineNumbers[1]].visibility = View.VISIBLE
                 tvAnswerLineList[listLineNumbers[1]].text = question.textCorrectAnswer
-
             }
-
-
+            else -> {
+                for (i in 0..2) {
+                    val j = listNumbers[i]
+                    tvAnswerList[j].visibility = View.VISIBLE
+                    tvAnswerList[j].text = question.wrongAnswers[j].text
+                }
+                tvAnswerList[listNumbers[3]].visibility = View.VISIBLE
+                tvAnswerList[listNumbers[3]].text = question.textCorrectAnswer
+            }
         }
     }
 
@@ -342,33 +208,17 @@ class QuestionActivity: AppCompatActivity(), View.OnClickListener, RewardedAdLoa
         if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) return
         mLastClickTime = SystemClock.elapsedRealtime()
 
-        var clickAnswer: String = ""
-
         if (p0 != null) {
-            when (p0.id){
-                R.id.clAnswer1,R.id.ivAnswer1Image,R.id.tvAnswer1Caption -> {
-
-                    clickAnswer = form.tvAnswer1Caption.text.toString()//.replace("/n", " ")
+            val clickAnswer =
+                when (p0?.id) {
+                    R.id.clAnswer1, R.id.ivAnswer1Image, R.id.tvAnswer1Caption -> form.tvAnswer1Caption.text.toString()
+                    R.id.clAnswer2, R.id.ivAnswer2Image, R.id.tvAnswer2Caption -> form.tvAnswer2Caption.text.toString()
+                    R.id.clAnswer3, R.id.ivAnswer3Image, R.id.tvAnswer3Caption -> form.tvAnswer3Caption.text.toString()
+                    R.id.clAnswer4, R.id.ivAnswer4Image, R.id.tvAnswer4Caption -> form.tvAnswer4Caption.text.toString()
+                    R.id.clAnswerLine1, R.id.tvAnswerLine1Caption -> form.tvAnswerLine1Caption.text.toString()
+                    R.id.clAnswerLine2, R.id.tvAnswerLine2Caption -> form.tvAnswerLine2Caption.text.toString()
+                    else -> ""
                 }
-                R.id.clAnswer2,R.id.ivAnswer2Image,R.id.tvAnswer2Caption -> {
-
-                    clickAnswer = form.tvAnswer2Caption.text.toString()//.replace("/n", " ")
-                }
-                R.id.clAnswer3,R.id.ivAnswer3Image,R.id.tvAnswer3Caption -> {
-
-                    clickAnswer = form.tvAnswer3Caption.text.toString()//.replace("/n", " ")
-                }
-                R.id.clAnswer4,R.id.ivAnswer4Image,R.id.tvAnswer4Caption -> {
-
-                    clickAnswer = form.tvAnswer4Caption.text.toString()//.replace("/n", " ")
-                }
-                R.id.clAnswerLine1,R.id.tvAnswerLine1Caption -> {
-                    clickAnswer = form.tvAnswerLine1Caption.text.toString()//.replace("/n", " ")
-                }
-                R.id.clAnswerLine2,R.id.tvAnswerLine2Caption -> {
-                    clickAnswer = form.tvAnswerLine2Caption.text.toString()//.replace("/n", " ")
-                }
-            }
             if (clickAnswer == question.textCorrectAnswer) {
                 mCorrectAnswers++
                 showResultDialog(clickAnswer, true)
@@ -380,8 +230,6 @@ class QuestionActivity: AppCompatActivity(), View.OnClickListener, RewardedAdLoa
             }
         }
     }
-
-
 
     private fun showResultDialog(errorAnswer: String, result: Boolean) {
 
@@ -409,12 +257,10 @@ class QuestionActivity: AppCompatActivity(), View.OnClickListener, RewardedAdLoa
 
         if (result) res.text = getString(R.string.correct) else res.text = getString(R.string.wrong)
 
-
-
         statisticData.add(DataClassStatisticResult(question.textQuestion, question.slugQuestion, question.textCorrectAnswer, errorAnswer, result))
 
         try {
-            val inputStream = applicationContext.assets.open("gameimage/" + question.slugDialogPic + ".webp")
+            val inputStream = applicationContext.assets.open("gameimage/" + question.slugDialog + ".webp")
             val bmp = BitmapDrawable.createFromStream(inputStream, null)?.toBitmap()
             img.setImageBitmap(bmp)
         } catch (e: IOException) {
