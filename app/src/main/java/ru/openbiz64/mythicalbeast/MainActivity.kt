@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity() {
             Log.e("MyLog", "DB updated")
         } else Log.e("MyLog", "DB is same version")
 
-        vm.setGameData(DataJsonLoader.getGameData("games", this@MainActivity))
+        //vm.setGameData(DataJsonLoader.getGameData("games", this@MainActivity))
 
         initAds()
 
