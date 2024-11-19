@@ -117,7 +117,7 @@ open class MainViewModel(): ViewModel() {
             }
     }
 
-    private fun loadGameListFromInternet(){
+    fun loadGameListFromInternet(){
         val list: ArrayList<GameDataClass> = arrayListOf()
         val url = "https://amaranth64.github.io/myth/quiz/games.json"
         val queue = Volley.newRequestQueue(APP_CONTEXT)

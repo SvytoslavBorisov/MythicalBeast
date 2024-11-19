@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.fragment.app.activityViewModels
 import ru.openbiz64.mythicalbeast.APP_CONTEXT
 import ru.openbiz64.mythicalbeast.QuestionActivity
+import ru.openbiz64.mythicalbeast.QuestionActivityMyth
 import ru.openbiz64.mythicalbeast.R
 import ru.openbiz64.mythicalbeast.WebActivity
 import ru.openbiz64.mythicalbeast.adapter.ArticleAdapter
@@ -77,6 +78,9 @@ class GameFragment : BaseFragment(), GameAdapter.Listener {
 
         }
 
+        form.bRepeat.setOnClickListener {
+            vm.loadGameListFromInternet()
+        }
     }
 
 
@@ -89,19 +93,10 @@ class GameFragment : BaseFragment(), GameAdapter.Listener {
     }
 
     override fun onClickItem(item: GameDataClass) {
-//        when (item.slug){
-//            "wolf_and_vampire"->{
-//
-//            }
-//            else -> {
-//                return
-//            }
-//        }
-    val i = Intent(requireContext(), QuestionActivity::class.java).apply{
-            putExtra(GameConst.CAPTION,item.title)
-            putExtra(GameConst.TYPE,item.slug)
-        }
-        startActivity(i)
+        val i = Intent(requireContext(), QuestionActivityMyth::class.java).apply{
+                putExtra(GameConst.FILE_QUESTION_NAME, item.slug)
+            }
+            startActivity(i)
     }
 
     companion object {

@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/mainmenu"
     style="@style/CardView">
 
     <LinearLayout
@@ -24,7 +25,7 @@
             android:layout_marginBottom="5dp"
             android:gravity="center"
             android:text="@string/correct"
-            android:textColor="@color/black"
+            android:textColor="#CECDCD"
             android:textSize="30sp"
             android:textStyle="bold" />
 
@@ -32,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_margin="5dp"
-            android:background="@color/purple_700"
+            android:background="@color/button_help"
             android:orientation="vertical"/>
 
         <ImageView
@@ -49,7 +50,7 @@
             android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="Заголовок"
-            android:textColor="@color/black"
+            android:textColor="@color/text_game"
             android:textSize="24sp" />
 
         <TextView
@@ -61,8 +62,8 @@
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
             android:gravity="center"
-            android:text="Полузащитник"
-            android:textColor="@color/black"
+            android:text="Комментарий"
+            android:textColor="@color/text_game"
             android:textSize="18sp" />
 
 
@@ -79,9 +80,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:gravity="center|center_horizontal|center_vertical"
-
                 android:text="@string/next"
-                android:textColor="@color/black" />
+                android:textColor="@color/button_help" />
         </LinearLayout>
 
     </LinearLayout>

@@ -10,6 +10,46 @@ import java.io.IOException
 
 object MyJsonHelper {
 
+    // формирование списка вопросов из строки (json файл как текст)
+    fun getQuestionListFromJsonString(jsonString: String): ArrayList<DataClassQuestionWithoutType> {
+
+        val jsonArray = JSONArray(jsonString)
+        val questionList = ArrayList<DataClassQuestionWithoutType>()
+
+        for (i in 0 until jsonArray.length()) {
+            val obj = jsonArray.getJSONObject(i)
+
+            val textQuestion = obj.getString("textQue")
+            val slugQuestion = obj.getString("slugQue")
+            val slugDialog = obj.getString("slugDlg")
+            val textCorrectAnswer = obj.getString("corAns")
+            val commentCorrectAnswer = obj.getString("comment").replace("_", "\n")
+
+            val listWrongAnswer = obj.getJSONArray("wrAns")
+                .let { jsonArray ->
+                    (0 until jsonArray.length()).map { index ->
+                        DataClassWrongAnswer(jsonArray.getString(index))
+                    }
+                }.shuffled()
+
+            questionList.add(
+                DataClassQuestionWithoutType(
+                    textQuestion,
+                    slugQuestion,
+                    slugDialog,
+                    textCorrectAnswer,
+                    commentCorrectAnswer,
+                    ArrayList(listWrongAnswer)
+                )
+            )
+        }
+
+        questionList.shuffle()
+
+        return questionList
+    }
+
+
     fun getQuestionList(fileName: String, context: Context): ArrayList<DataClassQuestionWithoutType> {
         val jsonArray = JSONArray(getJsonText(fileName, context))
         val questionList = ArrayList<DataClassQuestionWithoutType>()

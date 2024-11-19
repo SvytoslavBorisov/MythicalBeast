@@ -4,6 +4,8 @@ object GameConst {
 
     const val TYPE = "type"
     const val CAPTION = "caption"
+
+    const val FILE_QUESTION_NAME = "file_question_name"
     const val LEVEL = "level"
     const val GOAL = "goal"
     const val MISS = "miss"

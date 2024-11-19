@@ -26,6 +26,7 @@
         <activity android:name="ru.openbiz64.mythicalbeast.WebActivity" />
         <activity android:name="ru.openbiz64.mythicalbeast.FilterActivity" />
         <activity android:name="ru.openbiz64.mythicalbeast.QuestionActivity" />
+        <activity android:name="ru.openbiz64.mythicalbeast.QuestionActivityMyth" />
         <activity android:name="ru.openbiz64.mythicalbeast.ResultActivity" />
 
     </application>

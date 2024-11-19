@@ -419,8 +419,8 @@ class MainActivity : AppCompatActivity() {
 
         form.adMainBanner.apply {
             // Replace demo Ad Unit ID with actual Ad Unit ID
-            setAdUnitId("R-M-3169707-1")
-            //setAdUnitId("demo-banner-yandex")
+            //setAdUnitId("R-M-3169707-1")
+            setAdUnitId("demo-banner-yandex")
             setAdSize(bannerAdSize!!)
             setBannerAdEventListener(bannerAdEventListener)
             form.adMainBanner.loadAd(adRequest)

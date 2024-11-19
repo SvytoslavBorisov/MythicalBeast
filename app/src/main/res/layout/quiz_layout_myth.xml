@@ -156,7 +156,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/llProgressDetails" />
 
-
     <ImageView
         android:id="@+id/ivImage"
         android:layout_width="wrap_content"
@@ -181,8 +180,8 @@
         android:layout_height="0dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:orientation="vertical"
 
         app:layout_constraintBottom_toTopOf="@+id/adViewMain"
@@ -192,16 +191,15 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="270dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/clAnswerLine1"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="60dp"
                 android:layout_margin="3dp"
-                android:layout_weight="1"
                 android:onClick="onClick"
                 android:background="@drawable/btn_border">
 
@@ -228,9 +226,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/clAnswerLine2"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="60dp"
                 android:layout_margin="3dp"
-                android:layout_weight="1"
                 android:onClick="onClick"
                 android:background="@drawable/btn_border">
 
@@ -257,9 +254,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/clAnswerLine3"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="60dp"
                 android:layout_margin="3dp"
-                android:layout_weight="1"
                 android:onClick="onClick"
                 android:background="@drawable/btn_border">
 
@@ -286,9 +282,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/clAnswerLine4"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="60dp"
                 android:layout_margin="3dp"
-                android:layout_weight="1"
                 android:onClick="onClick"
                 android:background="@drawable/btn_border">
 
