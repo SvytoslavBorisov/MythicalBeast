@@ -28,8 +28,8 @@ class GameAdapter(private var listener: Listener, private val context: Context):
             tvDescription.text = item.description
 
             try {
-                if (item.picURL.contains("http")){
-                    Picasso.get().load(item.picURL).into(imageView)
+                if (item.picURL.contains(".webp")){
+                    Picasso.get().load("https://amaranth64.github.io/myth/quiz/images/" + item.picURL).into(imageView)
                 } else {
                     val inputStream = context.assets.open("images/" + item.picURL + ".webp")
                     val bmp = BitmapDrawable.createFromStream(inputStream, null)?.toBitmap()

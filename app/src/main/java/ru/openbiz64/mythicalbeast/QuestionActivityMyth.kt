@@ -20,6 +20,7 @@ import com.android.volley.toolbox.Volley
 import ru.openbiz64.mythicalbeast.databinding.QuizLayoutMythBinding
 import java.io.IOException
 import kotlin.random.Random
+import com.squareup.picasso.Picasso
 
 import com.yandex.mobile.ads.banner.BannerAdSize
 import com.yandex.mobile.ads.banner.BannerAdEventListener
@@ -29,7 +30,6 @@ import com.yandex.mobile.ads.rewarded.RewardedAd
 import com.yandex.mobile.ads.rewarded.RewardedAdEventListener
 import com.yandex.mobile.ads.rewarded.RewardedAdLoader
 import com.yandex.mobile.ads.rewarded.RewardedAdLoadListener
-import ru.openbiz64.mythicalbeast.dataclass.DataClassQuestion
 import ru.openbiz64.mythicalbeast.dataclass.DataClassQuestionWithoutType
 import ru.openbiz64.mythicalbeast.dataclass.DataClassStatisticResult
 import ru.openbiz64.mythicalbeast.dataclass.GameConst
@@ -54,10 +54,8 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
     private var rewardedAdLoader: RewardedAdLoader? = null
     private var isAdsload: Boolean = false
     private var bannerAdSize: BannerAdSize? = null
-    private var selectedIndex: Int = 0
 
     private val bannerAdEventListener = BannerAdYandexAdsEventListener()
-    private val eventLogger = RewardedAdEventLogger()
 
     private var statisticData = ArrayList<DataClassStatisticResult>()
 
@@ -88,9 +86,7 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
         form.bBackQuiz.setOnClickListener { goToBack() }
 
         // слушатель на кнопку ПОМОЩЬ
-        form.bHelp.setOnClickListener {
-            showRewardedAd()
-        }
+        form.bHelp.setOnClickListener { showRewardedAd() }
     }
 
     private fun loadQuestionData(filename: String){
@@ -129,7 +125,7 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
         // на случай, если вопросов было меньше
         if (mCommonQuestion > questionList.size) mCommonQuestion = questionList.size
 
-        //mCommonQuestion = questionList.size //!!!!!!!!!!!!ТОЛЬКО ДЛЯ ТЕСТА!!!!!!!!!!!!!!!!
+        mCommonQuestion = questionList.size //!!!!!!!!!!!!ТОЛЬКО ДЛЯ ТЕСТА!!!!!!!!!!!!!!!!
 
         // установка вопроса
         getQuestions()
@@ -187,15 +183,32 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
 
         // Загружаем картинку, если она есть
         if ((question.slugQuestion != "no_pic") and (question.slugQuestion.isNotEmpty())){
+
             try {
+
+                if (question.slugQuestion.contains(".webp"))
+                    Picasso.get().load("https://github.com/amaranth64/amaranth64.github.io/tree/main/myth/quiz/images/" +
+                            question.slugQuestion).into(form.ivImage)
+                else {
+                    applicationContext.assets.open("images/" + question.slugQuestion + ".webp").use {
+                        val bmp = BitmapDrawable.createFromStream(it, null)?.toBitmap()
+                        form.ivImage.setImageBitmap(bmp)
+                        form.ivImage.visibility = View.VISIBLE
+                    }
+                }
+
+                form.ivImage.visibility = View.VISIBLE
+            } catch (e: IOException) {
+                Toast.makeText(this, "File not found", Toast.LENGTH_LONG).show()
                 applicationContext.assets.open(question.slugQuestion).use {
                     val bmp = BitmapDrawable.createFromStream(it, null)?.toBitmap()
                     form.ivImage.setImageBitmap(bmp)
                     form.ivImage.visibility = View.VISIBLE
                 }
-            } catch (e: IOException) {
-                Toast.makeText(this, "File not found", Toast.LENGTH_LONG).show()
             }
+
+            form.ivImage.visibility = View.VISIBLE
+
         } else {
             form.ivImage.visibility = View.GONE
         }
@@ -258,16 +271,30 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
 
         statisticData.add(DataClassStatisticResult(question.textQuestion, question.slugQuestion, question.textCorrectAnswer, errorAnswer, result))
 
-        if ((question.slugDialog.isNotEmpty()) and (question.slugDialog != "no_pic")){
-            try {
-                val inputStream = applicationContext.assets.open(question.slugDialog)
-                val bmp = BitmapDrawable.createFromStream(inputStream, null)?.toBitmap()
-                img.setImageBitmap(bmp)
-            } catch (e: IOException) {
-                Toast.makeText(this, getString(R.string.file_not_found), Toast.LENGTH_LONG).show()
-            }
-        } else img.visibility = View.GONE
+        // Загружаем картинку, если она есть
+        if ((question.slugDialog != "no_pic") and (question.slugDialog.isNotEmpty())){
 
+            try {
+                if (question.slugDialog.contains(".webp"))
+                    Picasso.get().load("https://amaranth64.github.io/myth/quiz/images/" +
+                            question.slugDialog).into(img)
+                else {
+                    applicationContext.assets.open("images/" + question.slugDialog + ".webp").use {
+                        val bmp = BitmapDrawable.createFromStream(it, null)?.toBitmap()
+                        img.setImageBitmap(bmp)
+                    }
+                }
+            } catch (e: IOException) {
+                Toast.makeText(this, "File not found", Toast.LENGTH_LONG).show()
+                applicationContext.assets.open(question.slugDialog).use {
+                    val bmp = BitmapDrawable.createFromStream(it, null)?.toBitmap()
+                    img.setImageBitmap(bmp)
+                }
+            }
+
+            img.visibility = View.VISIBLE
+
+        } else img.visibility = View.GONE
 
         answer.text = question.textCorrectAnswer
         comment.text = question.commentCorrectAnswers
@@ -281,14 +308,14 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
             } else {
                 dialog.dismiss()
 
-                    val i = Intent(this, ResultActivity::class.java).apply {
-                        putExtra(GameConst.TYPE, mType)
-                        putExtra(GameConst.CAPTION, mCaption)
-                        putExtra(GameConst.CORRECT, mCorrectAnswers)
-                        putExtra(GameConst.WRONG, mWrongAnswers)
-                        putParcelableArrayListExtra(GameConst.STATISTIC, statisticData)
-                    }
-                    startActivity(i)
+                val i = Intent(this, ResultActivity::class.java).apply {
+                    putExtra(GameConst.TYPE, mType)
+                    putExtra(GameConst.CAPTION, mCaption)
+                    putExtra(GameConst.CORRECT, mCorrectAnswers)
+                    putExtra(GameConst.WRONG, mWrongAnswers)
+                    putParcelableArrayListExtra(GameConst.STATISTIC, statisticData)
+                }
+                startActivity(i)
                 finish()
             }
         }
@@ -348,12 +375,8 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
 
         // Очищаем все тексты
         remainingAnswers.forEach {
-            if (it.second.visibility != View.GONE) {
+            if (it.second.visibility != View.GONE)
                 it.second.visibility = View.INVISIBLE
-            }
-            else {
-                it.second.visibility = View.GONE
-            }
         }
 
         // Заполняем тексты оставшихся кнопок начиная с последних позиций
@@ -364,7 +387,7 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
             answers[targetIndex].first.visibility = View.VISIBLE
         }
     }
-    // Использование функций
+
     private fun hide_50_50() {
         hideAnswers(2) // Скрываем 2 неправильных ответа
     }
