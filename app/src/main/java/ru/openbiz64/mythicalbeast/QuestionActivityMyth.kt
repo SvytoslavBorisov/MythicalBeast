@@ -19,7 +19,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import ru.openbiz64.mythicalbeast.databinding.QuizLayoutMythBinding
 import java.io.IOException
-
+import kotlin.random.Random
 
 import com.yandex.mobile.ads.banner.BannerAdSize
 import com.yandex.mobile.ads.banner.BannerAdEventListener
@@ -99,9 +99,7 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
             Request.Method.GET,
             filename,
             { response ->
-
                 if (response.isNotEmpty()) {
-
                     // получили в response содержимое json файла как строку
                     questionList = GetQuestionsHelper.getQuestionsFromRequest(response)
                     if (questionList.isEmpty()) goToBack()
@@ -151,6 +149,10 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
         // Устанавливаем невидимость для всех элементов
         clAnswerList.forEach {
             it.visibility = View.GONE
+        }
+
+        tvAnswerList.forEach {
+            it.text = ""
         }
 
         val answerList =  ArrayList<String>()
@@ -293,35 +295,82 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
         dialog.show()
     }
 
-    private fun hide_50_50(){
+    private fun fisherYatesShuffle(list: MutableList<String>) {
+        for (i in list.size - 1 downTo 1) {
+            val j = Random.nextInt(i + 1) // Генерируем случайный индекс от 0 до i включительно
+            // Меняем элементы местами
+            val temp = list[i]
+            list[i] = list[j]
+            list[j] = temp
+        }
+    }
 
-        var counter: Int = 0
+    private fun hideAnswers(hideCount: Int) {
+        val answers = listOf(
+            Pair(form.tvAnswerLine1Caption, form.clAnswerLine1),
+            Pair(form.tvAnswerLine2Caption, form.clAnswerLine2),
+            Pair(form.tvAnswerLine3Caption, form.clAnswerLine3),
+            Pair(form.tvAnswerLine4Caption, form.clAnswerLine4)
+        )
 
-        if (form.tvAnswerLine1Caption.text.toString() != question.textCorrectAnswer) {
-            counter++
-            form.tvAnswerLine1Caption.visibility = View.INVISIBLE
-            form.clAnswerLine1.visibility = View.INVISIBLE
+        // Фильтруем неправильные ответы
+        val incorrectAnswers = answers.filter {
+            it.first.text.toString() != question.textCorrectAnswer &&
+                    it.first.text.toString().isNotEmpty() &&
+                    it.second.visibility == View.VISIBLE
+        }.toMutableList()
+
+        // Перемешиваем список неправильных ответов
+        fisherYatesShuffle(incorrectAnswers.map { it.first.text.toString() }.toMutableList())
+
+        // Скрываем указанное количество неправильных ответов
+        var hiddenCount = 0
+        while (hiddenCount < hideCount && incorrectAnswers.isNotEmpty()) {
+            val current = incorrectAnswers.removeFirst()
+            current.first.visibility = View.INVISIBLE    // Скрываем текстовое поле
+            current.second.visibility = View.INVISIBLE   // Скрываем контейнер
+            hiddenCount++
         }
 
-        if (form.tvAnswerLine2Caption.text.toString() != question.textCorrectAnswer) {
-            counter++
-            form.tvAnswerLine2Caption.visibility = View.INVISIBLE
-            form.clAnswerLine2.visibility = View.INVISIBLE
-        }
-        if (counter > 1) return
+        // Перемешиваем оставшиеся видимые ответы
+        moveRemainingAnswersToEnd(answers)
 
-        if (form.tvAnswerLine3Caption.text.toString() != question.textCorrectAnswer) {
-            counter++
-            form.tvAnswerLine3Caption.visibility = View.INVISIBLE
-            form.clAnswerLine3.visibility = View.INVISIBLE
-        }
-        if (counter > 1) return
+    }
 
-        if (form.tvAnswerLine4Caption.text.toString() != question.textCorrectAnswer) {
-            //counter++
-            form.tvAnswerLine4Caption.visibility = View.INVISIBLE
-            form.clAnswerLine4.visibility = View.INVISIBLE
+    private fun moveRemainingAnswersToEnd(answers: List<Pair<TextView, ViewGroup>>) {
+        // Находим оставшиеся видимые кнопки
+        val remainingAnswers = answers.filter { it.second.visibility == View.VISIBLE }
+
+        // Извлекаем текст оставшихся кнопок
+        val remainingTexts = remainingAnswers.map { it.first.text.toString() }.toMutableList()
+
+        fisherYatesShuffle(remainingTexts)
+
+        // Очищаем все тексты
+        remainingAnswers.forEach {
+            if (it.second.visibility != View.GONE) {
+                it.second.visibility = View.INVISIBLE
+            }
+            else {
+                it.second.visibility = View.GONE
+            }
         }
+
+        // Заполняем тексты оставшихся кнопок начиная с последних позиций
+        for (i in remainingTexts.indices) {
+            val targetIndex = answers.size - remainingTexts.size + i
+            answers[targetIndex].first.text = remainingTexts[i]
+            answers[targetIndex].second.visibility = View.VISIBLE
+            answers[targetIndex].first.visibility = View.VISIBLE
+        }
+    }
+    // Использование функций
+    private fun hide_50_50() {
+        hideAnswers(2) // Скрываем 2 неправильных ответа
+    }
+
+    private fun hide_one() {
+        hideAnswers(1) // Скрываем 1 неправильный ответ
     }
 
 
@@ -415,10 +464,12 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
 
     private fun showRewardedAd() {
         form.bHelp.visibility = View.INVISIBLE
-        rewardedAd?.apply {
-            setAdEventListener(eventLogger)
-            show(this@QuestionActivityMyth)
-        }
+//        rewardedAd?.apply {
+//            setAdEventListener(eventLogger)
+//            show(this@QuestionActivityMyth)
+//        }
+        hide_50_50()
+        form.bHelp.visibility = View.VISIBLE
     }
 
 
