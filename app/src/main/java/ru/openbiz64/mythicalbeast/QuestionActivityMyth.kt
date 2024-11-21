@@ -168,6 +168,7 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
         // записываем неверные ответы в список вопросов
         var wrongAnswersSize = wrongAnswer.size
         if (wrongAnswersSize > 3) wrongAnswersSize = 3
+
         for (i in 0..< wrongAnswersSize){
             answerList.add(wrongAnswer[i].text)
         }
@@ -179,6 +180,7 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
         for (i in 0..< answerList.size){
             tvAnswerList[i].text = answerList[i]
             clAnswerList[i].visibility = View.VISIBLE
+            tvAnswerList[i].visibility = View.VISIBLE
         }
 
         // Загружаем картинку, если она есть
