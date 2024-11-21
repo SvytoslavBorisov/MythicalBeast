@@ -17,7 +17,7 @@
         android:backgroundTint="#1D1D1D"
         android:text="@string/help"
         android:textColor="@color/button_help"
-        android:textSize="12sp"
+        android:textSize="11sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -169,6 +169,7 @@
         android:layout_marginBottom="5dp"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
+        android:src="@drawable/img_205"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/layoutQuestionLine"
         app:layout_constraintEnd_toEndOf="parent"
