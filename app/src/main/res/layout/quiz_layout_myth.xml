@@ -9,7 +9,7 @@
 
     <Button
         android:id="@+id/bHelp"
-        android:layout_width="90dp"
+        android:layout_width="100dp"
         android:layout_height="40dp"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="8dp"
@@ -169,7 +169,7 @@
         android:layout_marginBottom="5dp"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
-        android:src="@drawable/img_205"
+        android:src="@drawable/ic_loading"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/layoutQuestionLine"
         app:layout_constraintEnd_toEndOf="parent"
