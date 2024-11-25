@@ -35,12 +35,11 @@ class ArticleAdapter(private var listener: Listener, private val context: Contex
                     ivImage.setImageBitmap(bmp)
                 }
 
-
             } catch (e: IOException) {
                 val inputStream = context.assets.open("images/pic1.webp")
                 val bmp = BitmapDrawable.createFromStream(inputStream, null)?.toBitmap()
                 ivImage.setImageBitmap(bmp)
-                //Toast.makeText(context, "File not found", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "File not found", Toast.LENGTH_LONG).show()
             }
 
             itemView.setOnClickListener {

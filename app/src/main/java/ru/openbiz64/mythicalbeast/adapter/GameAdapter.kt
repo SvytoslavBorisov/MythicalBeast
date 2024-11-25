@@ -36,7 +36,6 @@ class GameAdapter(private var listener: Listener, private val context: Context):
                     imageView.setImageBitmap(bmp)
                 }
 
-
             } catch (e: IOException) {
                 val inputStream = context.assets.open("images/pic1.webp")
                 val bmp = BitmapDrawable.createFromStream(inputStream, null)?.toBitmap()

@@ -3,6 +3,7 @@ package ru.openbiz64.mythicalbeast.model
 import ru.openbiz64.mythicalbeast.dataclass.DataClassQuestionWithoutType
 import ru.openbiz64.mythicalbeast.dataclass.DataClassWrongAnswer
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import org.json.JSONArray
 import java.io.IOException
@@ -19,7 +20,7 @@ object MyJsonHelper {
         for (i in 0 until jsonArray.length()) {
             val obj = jsonArray.getJSONObject(i)
 
-            val textQuestion = obj.getString("textQue")
+            val textQuestion = obj.getString("textQue").replace("_", "\n")
             val slugQuestion = obj.getString("slugQue")
             val slugDialog = obj.getString("slugDlg")
             val textCorrectAnswer = obj.getString("corAns")

@@ -187,7 +187,7 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
             try {
 
                 if (question.slugQuestion.contains(".webp"))
-                    Picasso.get().load("https://github.com/amaranth64/amaranth64.github.io/tree/main/myth/quiz/images/" +
+                    Picasso.get().load("https://amaranth64.github.io/myth/quiz/images/" +
                             question.slugQuestion).into(form.ivImage)
                 else {
                     applicationContext.assets.open("images/" + question.slugQuestion + ".webp").use {
@@ -200,11 +200,6 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
                 form.ivImage.visibility = View.VISIBLE
             } catch (e: IOException) {
                 Toast.makeText(this, "File not found", Toast.LENGTH_LONG).show()
-                applicationContext.assets.open(question.slugQuestion).use {
-                    val bmp = BitmapDrawable.createFromStream(it, null)?.toBitmap()
-                    form.ivImage.setImageBitmap(bmp)
-                    form.ivImage.visibility = View.VISIBLE
-                }
             }
 
             form.ivImage.visibility = View.VISIBLE
@@ -286,10 +281,6 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
                 }
             } catch (e: IOException) {
                 Toast.makeText(this, "File not found", Toast.LENGTH_LONG).show()
-                applicationContext.assets.open(question.slugDialog).use {
-                    val bmp = BitmapDrawable.createFromStream(it, null)?.toBitmap()
-                    img.setImageBitmap(bmp)
-                }
             }
 
             img.visibility = View.VISIBLE
