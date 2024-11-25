@@ -50,7 +50,6 @@ object MyJsonHelper {
         return questionList
     }
 
-
     fun getQuestionList(fileName: String, context: Context): ArrayList<DataClassQuestionWithoutType> {
 
         val jsonArray = JSONArray(getJsonText(fileName, context))

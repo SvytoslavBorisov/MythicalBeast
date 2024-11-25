@@ -89,20 +89,25 @@ open class MainViewModel(): ViewModel() {
 
                 if (response.isNotEmpty()) {
 
-                    val jsonArray = JSONArray(response)
+                    val jsonArray = JSONObject(response).getJSONArray("articles")
+
 
                     for (i in 0 until jsonArray.length()) {
+
                         val obj = jsonArray.getJSONObject(i)
 
+                        val id = obj.getString("id")
                         val title = obj.getString("title")
                         val category = obj.getString("category")
+
+                        val urlA = obj.getString("url")
                         val picURL = obj.getString("picURL")
                         val description = obj.getString("description")
 
                         val data = ArticleDataClass(
                             title,
                             category,
-                            url,
+                            urlA,
                             picURL,
                             description
                         )

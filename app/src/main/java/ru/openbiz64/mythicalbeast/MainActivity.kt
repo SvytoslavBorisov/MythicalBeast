@@ -18,7 +18,6 @@ import android.view.WindowManager
 import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.badge.BadgeDrawable
 import com.yandex.mobile.ads.banner.BannerAdEventListener
@@ -27,9 +26,6 @@ import com.yandex.mobile.ads.common.AdRequest
 import com.yandex.mobile.ads.common.AdRequestError
 import com.yandex.mobile.ads.common.ImpressionData
 import com.yandex.mobile.ads.common.MobileAds
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import ru.openbiz64.mythicalbeast.databinding.ActivityMainBinding
 import ru.openbiz64.mythicalbeast.dataclass.CommonConst
 import ru.openbiz64.mythicalbeast.fragment.ArticleFragment
@@ -39,7 +35,6 @@ import ru.openbiz64.mythicalbeast.fragment.BeastsListFragment
 import ru.openbiz64.mythicalbeast.model.DataJsonLoader
 import ru.openbiz64.mythicalbeast.model.MainViewModel
 import ru.openbiz64.mythicalbeast.model.RoomViewModel
-import ru.openbiz64.mythicalbeast.MainApp
 import ru.openbiz64.mythicalbeast.fragment.GameFragment
 import kotlin.math.roundToInt
 
@@ -48,7 +43,7 @@ class MainActivity : AppCompatActivity() {
     private val versionDB = 2
     private lateinit var form: ActivityMainBinding
 
-    private lateinit var badge: BadgeDrawable
+    private lateinit var badgeArticle: BadgeDrawable
     private lateinit var badgeGame: BadgeDrawable
 
     private lateinit var vm: MainViewModel
@@ -73,8 +68,8 @@ class MainActivity : AppCompatActivity() {
 
         APP_CONTEXT = this
 
-        badge = form.bnMenu.getOrCreateBadge(R.id.id_article)
-        badge.isVisible = false
+        badgeArticle = form.bnMenu.getOrCreateBadge(R.id.id_article)
+        badgeArticle.isVisible = false
 
         badgeGame = form.bnMenu.getOrCreateBadge(R.id.id_games)
         badgeGame.isVisible = false
@@ -109,8 +104,8 @@ class MainActivity : AppCompatActivity() {
         // слушатель на новые истории
         vm.newArticle.observe(this){
             if (it > 0) {
-                badge.isVisible = true
-                badge.number = it
+                badgeArticle.isVisible = true
+                badgeArticle.number = it
             }
         }
 
@@ -403,8 +398,8 @@ class MainActivity : AppCompatActivity() {
                         editor.apply()
                     }
                     // скрываем значок количества новых историй
-                    badge.isVisible = false
-                    badge.number = 0
+                    badgeArticle.isVisible = false
+                    badgeArticle.number = 0
 
                 }
                 R.id.id_games->{
@@ -412,6 +407,17 @@ class MainActivity : AppCompatActivity() {
                     vm.setCurrentFragmentId(R.id.id_games)
                     FragmentManager.setFragment(GameFragment.newInstance(), this)
                     toggleMenu(true)
+
+                    // при клике на Викторинах сохраняется новое количество историй
+                    val sharedPref: SharedPreferences = APP_CONTEXT.getSharedPreferences(CommonConst.sharedBlock, Context.MODE_PRIVATE)
+                    val editor: SharedPreferences.Editor = sharedPref.edit()
+                    vm.gameData.value?.let { it1 ->
+                        editor.putInt("gameCount", it1.count())
+                        editor.apply()
+                    }
+                    // скрываем значок количества новых историй
+                    badgeGame.isVisible = false
+                    badgeGame.number = 0
                 }
             }
             true
