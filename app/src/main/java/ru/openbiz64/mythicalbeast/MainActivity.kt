@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var form: ActivityMainBinding
 
     private lateinit var badge: BadgeDrawable
+    private lateinit var badgeGame: BadgeDrawable
 
     private lateinit var vm: MainViewModel
     private val fileName = "beasts"
@@ -74,6 +75,9 @@ class MainActivity : AppCompatActivity() {
 
         badge = form.bnMenu.getOrCreateBadge(R.id.id_article)
         badge.isVisible = false
+
+        badgeGame = form.bnMenu.getOrCreateBadge(R.id.id_games)
+        badgeGame.isVisible = false
 
         vm = ViewModelProvider(this).get(MainViewModel::class.java)
 
@@ -107,6 +111,14 @@ class MainActivity : AppCompatActivity() {
             if (it > 0) {
                 badge.isVisible = true
                 badge.number = it
+            }
+        }
+
+        // слушатель на новые games
+        vm.newGameData.observe(this){
+            if (it > 0) {
+                badgeGame.isVisible = true
+                badgeGame.number = it
             }
         }
 

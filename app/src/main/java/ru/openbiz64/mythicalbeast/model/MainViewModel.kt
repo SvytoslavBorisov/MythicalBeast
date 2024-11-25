@@ -36,6 +36,7 @@ open class MainViewModel(): ViewModel() {
     val articleData: MutableLiveData<ArrayList<ArticleDataClass>> by lazy { MutableLiveData()}
     val gameData: MutableLiveData<ArrayList<GameDataClass>> by lazy { MutableLiveData()}
     val newArticle: MutableLiveData<Int> by lazy { MutableLiveData()}
+    val newGameData: MutableLiveData<Int> by lazy { MutableLiveData()}
 
     private val reserveGameData: ArrayList<GameDataClass> by lazy { arrayListOf()}
     private val reserveData:ArrayList<ArticleDataClass> by lazy { arrayListOf() }
@@ -73,51 +74,68 @@ open class MainViewModel(): ViewModel() {
     }
 
     fun loadArticalsFromInternet(){
-            CoroutineScope(Dispatchers.IO).launch {
 
-                // считываем количество старых историй
-                val sharedPref: SharedPreferences = APP_CONTEXT.getSharedPreferences(CommonConst.sharedBlock, Context.MODE_PRIVATE)
-                val articleCount = sharedPref.getInt("articleCount", 0)
+        // считываем количество старых историй
+        val sharedPref: SharedPreferences = APP_CONTEXT.getSharedPreferences(CommonConst.sharedBlock, Context.MODE_PRIVATE)
+        val articleCount = sharedPref.getInt("articleCount", 0)
 
-                Log.d("MyLog", "Loading Articals from Internet")
-                val interceptor = HttpLoggingInterceptor()
-                interceptor.level = HttpLoggingInterceptor.Level.BODY
+        val list: ArrayList<ArticleDataClass> = arrayListOf()
+        val url = "https://amaranth64.github.io/myth/articals_web.json"
+        val queue = Volley.newRequestQueue(APP_CONTEXT)
+        val sRequest = StringRequest(
+            Request.Method.GET,
+            url,
+            { response ->
 
-                val client = OkHttpClient.Builder()
-                    .addInterceptor(interceptor)
-                    .build()
+                if (response.isNotEmpty()) {
 
-                val retrofit = Retrofit.Builder()
-                    .baseUrl("https://amaranth64.github.io").client(client)
-                    .addConverterFactory(GsonConverterFactory.create()).build()
-                val mainApi = retrofit.create(RetrofitAPI::class.java)
+                    val jsonArray = JSONArray(response)
 
-                var response: Response<ArticleList>? = null
-                try {
-                    response = mainApi.getArticleList()
-                } catch (e: IOException) {
-                    Log.d("MyLog", "Connection error")
-                }
-                if (response != null && response.isSuccessful) {
-                    response.body()?.articles?.let {
-                        reserveData.addAll(it)
-                        Log.d("MyLog", "add ArticleData from Retrofit")
+                    for (i in 0 until jsonArray.length()) {
+                        val obj = jsonArray.getJSONObject(i)
+
+                        val title = obj.getString("title")
+                        val category = obj.getString("category")
+                        val picURL = obj.getString("picURL")
+                        val description = obj.getString("description")
+
+                        val data = ArticleDataClass(
+                            title,
+                            category,
+                            url,
+                            picURL,
+                            description
+                        )
+
+                        list.add(data)
                     }
+
+                    list.reverse()
+                    articleData.postValue(list)
+
+                    // если загруженных историй больше чем было -> обновляем newArticle (см MainActivity)
+                    if (articleCount < list.count()){
+                        newArticle.postValue(list.count() - articleCount)
+                    }
+
+                    Log.d("MyLog", "Model init CoroutineScope end")
                 }
-
-                reserveData.reverse()
-                articleData.postValue(reserveData)
-
-                // если загруженных историй больше чем было -> обновляем newArticle (см MainActivity)
-                if (articleCount < reserveData.count()){
-                    newArticle.postValue(reserveData.count() - articleCount)
-                }
-
-                Log.d("MyLog", "Model init CoroutineScope end")
+            },
+            {
+                Log.d("MyLog", "VolleyError: $it")
             }
+        )
+        sRequest.setShouldCache(false)
+        queue.add(sRequest)
+
     }
 
     fun loadGameListFromInternet(){
+
+        // считываем количество старых историй
+        val sharedPref: SharedPreferences = APP_CONTEXT.getSharedPreferences(CommonConst.sharedBlock, Context.MODE_PRIVATE)
+        val gameCount = sharedPref.getInt("gameCount", 0)
+
         val list: ArrayList<GameDataClass> = arrayListOf()
         val url = "https://amaranth64.github.io/myth/quiz/games.json"
         val queue = Volley.newRequestQueue(APP_CONTEXT)
@@ -148,6 +166,12 @@ open class MainViewModel(): ViewModel() {
                         list.add(data)
                     }
                     setGameData(list)
+
+                    // если загруженных историй больше чем было -> обновляем newArticle (см MainActivity)
+                    if (gameCount < list.count()){
+                        newGameData.postValue(list.count() - gameCount)
+                    }
+
                 }
             },
             {
