@@ -29,6 +29,7 @@
             android:screenOrientation="portrait"/>
         <activity android:name="ru.openbiz64.mythicalbeast.QuestionActivityMyth" />
         <activity android:name="ru.openbiz64.mythicalbeast.ResultActivity" />
+        <activity android:name="ru.openbiz64.mythicalbeast.ResultActivityNew" />
 
     </application>
 

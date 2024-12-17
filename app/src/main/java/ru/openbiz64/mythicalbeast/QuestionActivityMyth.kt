@@ -69,6 +69,7 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
         supportActionBar?.hide()
 
         val mFilename = intent.getStringExtra(GameConst.FILE_QUESTION_NAME).toString()
+        mCaption = intent.getStringExtra(GameConst.CAPTION).toString()
         if (mFilename.isEmpty()) goToBack()
 
         // загрузка вопросов из файла
@@ -122,10 +123,11 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
         // первый вопрос
         question = questionList[0]
 
+
         // на случай, если вопросов было меньше
         if (mCommonQuestion > questionList.size) mCommonQuestion = questionList.size
 
-        mCommonQuestion = questionList.size //!!!!!!!!!!!!ТОЛЬКО ДЛЯ ТЕСТА!!!!!!!!!!!!!!!!
+        //mCommonQuestion = questionList.size //!!!!!!!!!!!!ТОЛЬКО ДЛЯ ТЕСТА!!!!!!!!!!!!!!!!
 
         // установка вопроса
         getQuestions()
@@ -299,7 +301,7 @@ class QuestionActivityMyth: AppCompatActivity(), View.OnClickListener, RewardedA
             } else {
                 dialog.dismiss()
 
-                val i = Intent(this, ResultActivity::class.java).apply {
+                val i = Intent(this, ResultActivityNew::class.java).apply {
                     putExtra(GameConst.TYPE, mType)
                     putExtra(GameConst.CAPTION, mCaption)
                     putExtra(GameConst.CORRECT, mCorrectAnswers)

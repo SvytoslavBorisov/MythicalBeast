@@ -94,6 +94,7 @@ class GameFragment : BaseFragment(), GameAdapter.Listener {
 
     override fun onClickItem(item: GameDataClass) {
         val i = Intent(requireContext(), QuestionActivityMyth::class.java).apply{
+                putExtra(GameConst.CAPTION, item.title)
                 putExtra(GameConst.FILE_QUESTION_NAME, item.slug)
             }
             startActivity(i)

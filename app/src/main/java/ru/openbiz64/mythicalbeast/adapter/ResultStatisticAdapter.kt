@@ -36,12 +36,11 @@ class ResultStatisticAdapter(var gpList:ArrayList<DataClassStatisticResult>, con
             var bmp: Bitmap? = null
             if (listItem.slugQuestion != "no_pic"){
                 ivPhotoQuestion.visibility = View.VISIBLE
-
-                if (listItem.slugQuestion!!.contains("http")){
-                    Picasso.get().load(listItem.slugQuestion).placeholder(R.drawable.ic_loading).error(R.drawable.need_internet).noFade().into(ivPhotoQuestion)
+                if (listItem.slugQuestion!!.contains("webp")){
+                    Picasso.get().load("https://amaranth64.github.io/myth/quiz/images/" + listItem.slugQuestion).placeholder(R.drawable.ic_loading).error(R.drawable.need_internet).noFade().into(ivPhotoQuestion)
                 } else {
                     try {
-                        val inputStream = context.assets.open("gameimage/" + listItem.slugQuestion + ".webp")
+                        val inputStream = context.assets.open("images/" + listItem.slugQuestion + ".webp")
                         bmp = BitmapDrawable.createFromStream(inputStream, null)?.toBitmap()
                         if (bmp != null) ivPhotoQuestion.setImageBitmap(bmp) else ivPhotoQuestion.setImageResource(R.drawable.ic_baseline_help_outline_24)
                     } catch (e: IOException) {
