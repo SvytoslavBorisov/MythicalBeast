@@ -17,6 +17,11 @@
     <color name="green">#3C9A02</color>
     <color name="wrong">#C02E00</color>
 
+    <color name="very_light_green">#D4FFB8</color>
+    <color name="very_light_red">#FBBFAD</color>
+    <color name="light_green">#9AFA5E</color>
+    <color name="light_red">#FF8B68</color>
+
     <color name="mainmenu">#2C2C2C</color>
     <color name="mybkg">#FF121212</color>
     <color name="text_description">#FAF5D2</color>
